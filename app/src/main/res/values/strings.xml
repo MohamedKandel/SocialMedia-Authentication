@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Social Media Authentication</string>
+    <!--app ID from facebook developer app page -->
     <string name="facebook_app_id">828718602386572</string>
     <string name="fb_login_protocol_scheme">fb828718602386572</string>
+    <!--secret key from facebook developer app page -->
     <string name="facebook_client_token">6993e0af60631cdce44ec9604f536682</string>
 </resources>
