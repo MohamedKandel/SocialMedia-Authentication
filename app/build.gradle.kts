@@ -43,5 +43,6 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     implementation ("com.facebook.android:facebook-login:latest.release")
-
+    implementation ("com.google.android.gms:play-services-auth:20.7.0")
+    implementation ("com.twitter.sdk.android:twitter-core:3.2.0")
 }

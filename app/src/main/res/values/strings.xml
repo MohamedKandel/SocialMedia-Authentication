@@ -5,4 +5,8 @@
     <string name="fb_login_protocol_scheme">fb828718602386572</string>
     <!--secret key from facebook developer app page -->
     <string name="facebook_client_token">6993e0af60631cdce44ec9604f536682</string>
+
+    <!-- twitter api key and secret key -->
+    <string name="twitter_api_key">MVBFcHdpZ3NnS0JFeWtGOWRsblA6MTpjaQ</string>
+    <string name="twitter_api_secret">H9W5KHSLRd3movtSNb1lLd_aUljX3T5znUGN0Wgp8laoV3R-Nk</string>
 </resources>
