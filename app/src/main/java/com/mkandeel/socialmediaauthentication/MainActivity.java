@@ -13,9 +13,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -26,15 +29,16 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.mkandeel.socialmediaauthentication.databinding.ActivityMainBinding;
-import com.twitter.sdk.android.core.Callback;
-import com.twitter.sdk.android.core.DefaultLogger;
-import com.twitter.sdk.android.core.Result;
-import com.twitter.sdk.android.core.Twitter;
-import com.twitter.sdk.android.core.TwitterAuthConfig;
-import com.twitter.sdk.android.core.TwitterConfig;
-import com.twitter.sdk.android.core.TwitterException;
-import com.twitter.sdk.android.core.TwitterSession;
-import com.twitter.sdk.android.core.identity.TwitterAuthClient;
+import com.parse.LogInCallback;
+import com.parse.Parse;
+import com.parse.ParseException;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
+import com.parse.twitter.ParseTwitterUtils;
+
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Arrays;
 
@@ -51,7 +55,17 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        callbackManager = CallbackManager.Factory.create();
+
+        binding.btnTwitter.setOnClickListener(view -> {
+            twitterLogin();
+        });
+
+        binding.btnLogout.setOnClickListener(view -> {
+            ParseUser.logOut();
+        });
+
+
+        /*callbackManager = CallbackManager.Factory.create();
 
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail().build();
@@ -64,8 +78,34 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
                         // App code
-                        startActivity(new Intent(MainActivity.this, SecondActivity.class));
+                        Intent intent = new Intent(MainActivity.this,SecondActivity.class);
+                        intent.putExtra("google", false);
+                        startActivity(intent);
                         finish();
+                        AccessToken accessToken = loginResult.getAccessToken();
+                        GraphRequest request = GraphRequest.newMeRequest(
+                                accessToken,
+                                new GraphRequest.GraphJSONObjectCallback() {
+                                    @Override
+                                    public void onCompleted(
+                                            JSONObject object,
+                                            GraphResponse response) {
+                                        try {
+                                            // get response model from the below link
+                                            //https://developers.facebook.com/docs/android/graph/
+                                            String name = object.getString("name");
+                                            String id = object.getString("id");
+                                            Log.i("Login With Facebook ", "onCompleted: " + name + "\n" + id);
+                                        } catch (JSONException e) {
+                                            throw new RuntimeException(e);
+                                        }
+                                        // Application code
+                                    }
+                                });
+                        Bundle parameters = new Bundle();
+                        parameters.putString("fields", "id,name,link");
+                        request.setParameters(parameters);
+                        request.executeAsync();
                     }
 
                     @Override
@@ -91,10 +131,56 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 singInWithGoogle();
             }
+        });*/
+    }
+
+    private void twitterLogin() {
+        ParseTwitterUtils.logIn(MainActivity.this, new LogInCallback() {
+
+            @Override
+            public void done(final ParseUser user, ParseException err) {
+                if (err != null) {
+                    //dlg.dismiss();
+                    ParseUser.logOut();
+                    Log.e("err", "err", err);
+                }
+                if (user == null) {
+                    //dlg.dismiss();
+                    ParseUser.logOut();
+                    Toast.makeText(MainActivity.this, "The user cancelled the Twitter login.", Toast.LENGTH_LONG).show();
+                    Log.d("MyApp", "Uh oh. The user cancelled the Twitter login.");
+                } else if (user.isNew()) {
+                    //dlg.dismiss();
+                    Log.i("Twitter AUTH", "done: "+ParseTwitterUtils.getTwitter().getUserId()+"\n"+
+                            ParseTwitterUtils.getTwitter().getScreenName());
+
+                    Toast.makeText(MainActivity.this, "User signed up and logged in through Twitter.", Toast.LENGTH_LONG).show();
+                    Log.d("MyApp", "User signed up and logged in through Twitter!");
+                    user.setUsername(ParseTwitterUtils.getTwitter().getScreenName());
+                    user.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if (null == e) {
+                                //alertDisplayer("First tome login!", "Welcome!");
+                            } else {
+                                ParseUser.logOut();
+                                Toast.makeText(MainActivity.this, "It was not possible to save your username.", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    });
+                } else {
+                    Log.i("Twitter AUTH", "done: "+ParseTwitterUtils.getTwitter().getUserId()+"\n"+
+                            ParseTwitterUtils.getTwitter().getScreenName());
+                    //dlg.dismiss();
+                    Toast.makeText(MainActivity.this, "User logged in through Twitter.", Toast.LENGTH_LONG).show();
+                    Log.d("MyApp", "User logged in through Twitter!");
+                    //alertDisplayer("Oh, you!","Welcome back!");
+                }
+            }
         });
     }
 
-    private ActivityResultLauncher<Intent> arl = registerForActivityResult(
+    /*private ActivityResultLauncher<Intent> arl = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
                 @Override
@@ -107,6 +193,9 @@ public class MainActivity extends AppCompatActivity {
                             task.addOnSuccessListener(new OnSuccessListener<GoogleSignInAccount>() {
                                 @Override
                                 public void onSuccess(GoogleSignInAccount account) {
+                                    System.out.println(account.getId());
+                                    System.out.println(account.getDisplayName());
+
                                     Intent intent = new Intent(MainActivity.this, SecondActivity.class);
                                     intent.putExtra("google", true);
                                     startActivity(intent);
@@ -131,5 +220,5 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         callbackManager.onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
-    }
+    }*/
 }

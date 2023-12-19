@@ -4,7 +4,7 @@ pluginManagement {
         mavenCentral()
         gradlePluginPortal()
         maven {
-            setUrl("https://jitpack.io")
+            setUrl("https://www.jitpack.io")
         }
     }
 }
@@ -14,10 +14,7 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven {
-            setUrl("https://jitpack.io")
-            setUrl("https://maven.fabric.io/public")
-            setUrl("https://jcenter.bintray.com")
-
+            setUrl("https://www.jitpack.io")
         }
     }
 }

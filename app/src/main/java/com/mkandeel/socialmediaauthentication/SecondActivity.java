@@ -39,7 +39,9 @@ public class SecondActivity extends AppCompatActivity {
         binding = ActivitySecondBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        if (getIntent().getExtras() != null) {
+
+
+        /*if (getIntent().getExtras() != null) {
             Bundle bundle = getIntent().getExtras();
             boolean withGoogle = bundle.getBoolean("google",false);
             if (withGoogle) {
@@ -75,7 +77,9 @@ public class SecondActivity extends AppCompatActivity {
                                 try {
                                     // get response model from the below link
                                     //https://developers.facebook.com/docs/android/graph/
-                                    binding.txtName.setText(object.getString("name"));
+                                    String name = object.getString("name");
+                                    binding.txtName.setText(name);
+                                    Log.i("Login With Facebook ", "onCompleted: "+name);
                                 } catch (JSONException e) {
                                     throw new RuntimeException(e);
                                 }
@@ -97,7 +101,7 @@ public class SecondActivity extends AppCompatActivity {
                 });
                 //System.out.println("Error occurred");
             }
-        }
+        }*/
     }
 
     private void signOut() {
