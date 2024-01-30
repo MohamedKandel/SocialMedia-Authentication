@@ -39,6 +39,9 @@ public class SecondActivity extends AppCompatActivity {
         binding = ActivitySecondBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        String name = getIntent().getExtras().getString("USER_NAME");
+        String id = getIntent().getExtras().getString("USER_ID");
+        binding.txtName.setText(name+"\n"+id);
 
 
         /*if (getIntent().getExtras() != null) {

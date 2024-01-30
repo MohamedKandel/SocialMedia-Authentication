@@ -30,12 +30,21 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.mkandeel.socialmediaauthentication.databinding.ActivityMainBinding;
 import com.parse.LogInCallback;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.parse.twitter.ParseTwitterUtils;
-
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.DefaultLogger;
+import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.Twitter;
+import com.twitter.sdk.android.core.TwitterAuthConfig;
+import com.twitter.sdk.android.core.TwitterAuthToken;
+import com.twitter.sdk.android.core.TwitterConfig;
+import com.twitter.sdk.android.core.TwitterCore;
+import com.twitter.sdk.android.core.TwitterException;
+import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -49,12 +58,39 @@ public class MainActivity extends AppCompatActivity {
     private GoogleSignInOptions gso;
     private GoogleSignInClient gsc;
 
+    private TwitterLoginButton loginButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        TwitterConfig config = new TwitterConfig.Builder(this)
+                .logger(new DefaultLogger(Log.DEBUG))
+                .twitterAuthConfig(new TwitterAuthConfig(getString(R.string.com_twitter_sdk_android_CONSUMER_KEY), getString(R.string.com_twitter_sdk_android_CONSUMER_SECRET)))
+                .debug(true)
+                .build();
+        Twitter.initialize(config);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        loginButton = findViewById(R.id.btn_twitter);
+
+        loginButton.setCallback(new Callback<TwitterSession>() {
+            @Override
+            public void success(Result<TwitterSession> result) {
+                TwitterSession session = result.data;
+                //TwitterSession session = TwitterCore.getInstance().getSessionManager().getActiveSession();
+                TwitterAuthToken token = session.getAuthToken();
+                String mtoken = token.token;
+                String secret = token.secret;
+
+                login(session);
+            }
+
+            @Override
+            public void failure(TwitterException exception) {
+                Toast.makeText(MainActivity.this, "failed", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         binding.btnTwitter.setOnClickListener(view -> {
             twitterLogin();
@@ -65,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        /*callbackManager = CallbackManager.Factory.create();
+        callbackManager = CallbackManager.Factory.create();
 
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail().build();
@@ -80,8 +116,7 @@ public class MainActivity extends AppCompatActivity {
                         // App code
                         Intent intent = new Intent(MainActivity.this,SecondActivity.class);
                         intent.putExtra("google", false);
-                        startActivity(intent);
-                        finish();
+
                         AccessToken accessToken = loginResult.getAccessToken();
                         GraphRequest request = GraphRequest.newMeRequest(
                                 accessToken,
@@ -95,6 +130,10 @@ public class MainActivity extends AppCompatActivity {
                                             //https://developers.facebook.com/docs/android/graph/
                                             String name = object.getString("name");
                                             String id = object.getString("id");
+                                            intent.putExtra("USER_NAME",name);
+                                            intent.putExtra("USER_ID",id);
+                                            startActivity(intent);
+                                            finish();
                                             Log.i("Login With Facebook ", "onCompleted: " + name + "\n" + id);
                                         } catch (JSONException e) {
                                             throw new RuntimeException(e);
@@ -131,7 +170,23 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 singInWithGoogle();
             }
-        });*/
+        });
+    }
+
+    private void login(TwitterSession session) {
+        String name = session.getUserName();
+        String id = String.valueOf(session.getUserId());
+        Intent intent = new Intent(this, SecondActivity.class);
+        intent.putExtra("USER_NAME",name);
+        intent.putExtra("USER_ID",id);
+        startActivity(intent);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data);
+        loginButton.onActivityResult(requestCode,resultCode,data);
     }
 
     private void twitterLogin() {
@@ -180,7 +235,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    /*private ActivityResultLauncher<Intent> arl = registerForActivityResult(
+    private ActivityResultLauncher<Intent> arl = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
                 @Override
@@ -216,9 +271,5 @@ public class MainActivity extends AppCompatActivity {
         arl.launch(intent);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        callbackManager.onActivityResult(requestCode, resultCode, data);
-        super.onActivityResult(requestCode, resultCode, data);
-    }*/
+
 }

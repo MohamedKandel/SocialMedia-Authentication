@@ -6,11 +6,14 @@
     <!--secret key from facebook developer app page -->
     <string name="facebook_client_token">6993e0af60631cdce44ec9604f536682</string>
 
-    <!-- twitter api key and secret key -->
-    <string name="twitter_consumer_key">YJIE6baDpCjtjqXiPHf1pWTDi</string>
-    <string name="twitter_consumer_secret">zS575gPRMpN4srzsz2zQZYZzBK9NAVRrTJ9tKftubgx1ScgVGJ</string>
-    <!-- -->
-    <string name="client_key">fWANnBBCk1YjrkGxjTc3cX1cR8NCkoEpYTlP123F</string>
-    <string name="app_id">KL6uQN6JQUGBIM87n11UTcAGPyu0UaCvgz6n3DjY</string>
-    <string name="back4app_server_url">https://parseapi.back4app.com/</string>
+<!--    &lt;!&ndash; twitter api key and secret key &ndash;&gt;-->
+<!--    <string name="twitter_consumer_key">YJIE6baDpCjtjqXiPHf1pWTDi</string>-->
+<!--    <string name="twitter_consumer_secret">zS575gPRMpN4srzsz2zQZYZzBK9NAVRrTJ9tKftubgx1ScgVGJ</string>-->
+<!--    &lt;!&ndash; &ndash;&gt;-->
+<!--    <string name="client_key">fWANnBBCk1YjrkGxjTc3cX1cR8NCkoEpYTlP123F</string>-->
+<!--    <string name="app_id">KL6uQN6JQUGBIM87n11UTcAGPyu0UaCvgz6n3DjY</string>-->
+<!--    <string name="back4app_server_url">https://parseapi.back4app.com/</string>-->
+    
+    <string name="com.twitter.sdk.android.CONSUMER_KEY">KxovZWiFulILTUFFHFL1khu3h</string>
+    <string name="com.twitter.sdk.android.CONSUMER_SECRET">0YCTzB98Tp9Y2l4Eu0lt4tFLye4Q4GDseTlIs3zHo71Vit86cZ</string>
 </resources>
